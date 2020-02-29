@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -23,10 +23,10 @@ public class Campaign {
     private String name;
 
     @Column(name = "start_effective_date")
-    private LocalDateTime startEffectiveDate;
+    private LocalDate startEffectiveDate;
 
     @Column(name = "end_effective_date")
-    private LocalDateTime endEffectiveDate;
+    private LocalDate endEffectiveDate;
 
     @Column(name = "id_heart_team")
     private Integer idHeartTeam;
