@@ -12,4 +12,5 @@ public interface CampaignService {
 
     List<Campaign> findAll();
 
+    List<Campaign> changeCampaignDates(List<Campaign> campaigns);
 }

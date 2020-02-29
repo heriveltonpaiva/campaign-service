@@ -61,12 +61,19 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public List<Campaign> findAll() {
         //TODO return only find compaign actives date
-        return Lists.newArrayList(repository.findAll());
+        final var list = repository.findAllActives();
+        log.info("m=findAllActives listsize="+list.size());
+        return list;
     }
 
     private void publishQueue(Campaign campaign){
         var notification = new Notification();
         notification.setData(campaign);
         producer.sendMessage(notification);
+    }
+
+    public List<Campaign> changeCampaignDates(List<Campaign> campaigns){
+
+        return null;
     }
 }
