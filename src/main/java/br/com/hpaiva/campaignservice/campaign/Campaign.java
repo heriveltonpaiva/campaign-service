@@ -1,5 +1,6 @@
 package br.com.hpaiva.campaignservice.campaign;
 
+import br.com.hpaiva.campaignservice.team.Team;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,6 +17,7 @@ public class Campaign {
 
     @Id
     @GeneratedValue
+    @Column(name = "id_campaign")
     private Long id;
 
     private String name;
@@ -28,8 +30,9 @@ public class Campaign {
     @Column(name = "end_effective_date")
     private LocalDateTime endEffectiveDate;
 
-    @Column(name = "id_heart_team")
-    private Integer idHeartTeam;
+    @ManyToOne
+    @JoinColumn(name = "id_team")
+    private Team team;
 
     @Column(name = "create_at")
     private LocalDateTime createAt;

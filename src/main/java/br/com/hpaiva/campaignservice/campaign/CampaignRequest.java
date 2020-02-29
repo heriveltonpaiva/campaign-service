@@ -19,6 +19,6 @@ public class CampaignRequest {
 
     private LocalDateTime endEffectiveDate;
 
-    private Integer idHeartTeam;
+    private Long idHeartTeam;
 
 }

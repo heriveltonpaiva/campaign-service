@@ -15,7 +15,7 @@ spring:
     main:
       banner-mode: "off"
     datasource:
-      url: jdbc:h2:mem:campaigndb
+      url: jdbc:h2:mem:campaigndb;
       driverClassName: org.h2.Driver
       username: hpaiva
       password: hpaiva
