@@ -1,0 +1,6 @@
+rabbitmq:
+  image: rabbitmq:management
+  container_name: rabbitmq-campaign
+  ports:
+    - "5672:5672"
+    - "15672:15672"

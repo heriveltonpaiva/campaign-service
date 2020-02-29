@@ -15,7 +15,7 @@ spring:
     main:
       banner-mode: "off"
     datasource:
-      url: jdbc:h2:mem:campaingdb
+      url: jdbc:h2:mem:campaigndb
       driverClassName: org.h2.Driver
       username: hpaiva
       password: hpaiva
@@ -24,3 +24,8 @@ spring:
     h2:
       console:
         enabled: true
+
+rabbitmq:
+    queueName: campaign.queue
+    exchangeName: campaign-exchange
+    routingKey: campaign.routingkey

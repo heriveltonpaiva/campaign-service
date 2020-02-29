@@ -14,7 +14,7 @@ import java.util.List;
 @Api(value = "Campanhas Vigentes")
 public class CampaignResource {
 
-    public CampaignService campaignService;
+    private CampaignService campaignService;
 
     @PostMapping
     @ApiOperation(
@@ -26,6 +26,7 @@ public class CampaignResource {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation("Atualiza os dados da campanha")
     public ResponseEntity<Campaign> update(@PathVariable Long id, @RequestBody CampaignRequest campaignRequest){
         var campaign = campaignService.update(id, campaignRequest);
         return ResponseEntity.ok(campaign);

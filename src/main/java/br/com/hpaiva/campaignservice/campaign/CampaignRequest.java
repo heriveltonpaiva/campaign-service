@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -15,9 +15,9 @@ public class CampaignRequest {
 
     private String name;
 
-    private LocalDate startEffectiveDate;
+    private LocalDateTime startEffectiveDate;
 
-    private LocalDate endEffectiveDate;
+    private LocalDateTime endEffectiveDate;
 
     private Integer idHeartTeam;
 
