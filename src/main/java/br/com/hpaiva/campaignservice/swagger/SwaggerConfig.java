@@ -1,4 +1,4 @@
-package br.com.hpaiva.campaingservice.swagger;
+package br.com.hpaiva.campaignservice.swagger;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @RequiredArgsConstructor
 public class SwaggerConfig extends WebMvcConfigurationSupport {
 
-    private static final String RESOURCES = "br.com.hpaiva.campaingservice";
+    private static final String RESOURCES = "br.com.hpaiva.campaignservice";
 
     @Value("${info.build.version}")
     private String appBuildVersion;
@@ -32,7 +32,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
         final ApiInfo build =
                 new ApiInfoBuilder()
-                        .title("Welcome to Campaing Service ")
+                        .title("Welcome to Campaign Service ")
                         .description(appDescription)
                         .version(appBuildVersion)
                         .build();

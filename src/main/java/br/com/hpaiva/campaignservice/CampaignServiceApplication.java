@@ -1,13 +1,13 @@
-package br.com.hpaiva.campaingservice;
+package br.com.hpaiva.campaignservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CampaingServiceApplication {
+public class CampaignServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CampaingServiceApplication.class, args);
+		SpringApplication.run(CampaignServiceApplication.class, args);
 	}
 
 }

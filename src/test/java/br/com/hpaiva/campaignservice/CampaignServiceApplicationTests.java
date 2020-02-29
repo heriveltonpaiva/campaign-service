@@ -1,10 +1,10 @@
-package br.com.hpaiva.campaingservice;
+package br.com.hpaiva.campaignservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CampaingServiceApplicationTests {
+class CampaignServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
