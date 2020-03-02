@@ -12,17 +12,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "club_supporter")
 public class ClubSupporter {
 
     @Id
     @GeneratedValue
-    @Column(name = "id_club_supporter")
     private Long id;
 
     private String name;
 
     private String email;
 
+    @Column(name = "birth_date")
     private LocalDate birthDate;
 
     @ManyToOne

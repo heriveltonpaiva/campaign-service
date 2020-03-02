@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -22,29 +23,29 @@ public class CampaignServiceImpl implements CampaignService {
     private AMQPProducer producer;
 
     @Override
-    public Campaign save(CampaignRequest campaignRequest) {
+    public Campaign save(CampaignDTO campaignDTO) {
 
-        final var  team = teamService.findById(campaignRequest.getIdHeartTeam());
-        log.info("m=save status=initial team="+team);
-            final var campaign = Campaign.builder().
-                    name(campaignRequest.getName()).
-                    team(team.get()).
-                    startEffectiveDate(campaignRequest.getStartEffectiveDate()).
-                    endEffectiveDate(campaignRequest.getEndEffectiveDate()).
-                    build();
-            //TODO implement campaign bussiness rules before save
-        log.info("m=save status=final team="+team+" campaign="+campaign);
+        final var team = teamService.findById(campaignDTO.getIdHeartTeam());
+        log.info("m=save status=initial team=" + team);
+        final var campaign = Campaign.builder()
+                .name(campaignDTO.getName())
+                .team(team.get())
+                .startEffectiveDate(campaignDTO.getStartEffectiveDate())
+                .endEffectiveDate(campaignDTO.getEndEffectiveDate())
+                .build();
+        //TODO implement campaign bussiness rules before save
+        log.info("m=save status=final team=" + team + " campaign=" + campaign);
         return repository.save(campaign);
     }
 
     @Override
-    public Campaign update(Long campaignId, CampaignRequest campaignRequest) {
+    public Campaign update(Long campaignId, CampaignDTO campaignDTO) {
         var campaign = repository.findById(campaignId);
-
+        //TODO
         campaign.get().setTeam(null);
-        campaign.get().setName(campaignRequest.getName());
-        campaign.get().setStartEffectiveDate(campaignRequest.getStartEffectiveDate());
-        campaign.get().setEndEffectiveDate(campaignRequest.getEndEffectiveDate());
+        campaign.get().setName(campaignDTO.getName());
+        campaign.get().setStartEffectiveDate(campaignDTO.getStartEffectiveDate());
+        campaign.get().setEndEffectiveDate(campaignDTO.getEndEffectiveDate());
 
         //TODO transform toDto and validate equals before post on queue
         //TODO if campaign is equals then notify another services
@@ -59,21 +60,31 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public List<Campaign> findAll() {
-        //TODO return only find compaign actives date
-        final var list = repository.findAllActives();
-        log.info("m=findAllActives listsize="+list.size());
-        return list;
+    public List<CampaignDTO> findCampaignsByIdHeartTeam(final Long idHeartTeam) {
+        final var list = repository.findAllActivesByIdHeartTeam(idHeartTeam);
+        log.info("m=findAllActives listsize=" + list.size());
+        return list.stream().map(campaign -> toDto(campaign)).collect(Collectors.toList());
     }
 
-    private void publishQueue(Campaign campaign){
+    private void publishQueue(Campaign campaign) {
         var notification = new Notification();
         notification.setData(campaign);
         producer.sendMessage(notification);
     }
 
-    public List<Campaign> changeCampaignDates(List<Campaign> campaigns){
+    public List<Campaign> changeCampaignDates(List<Campaign> campaigns) {
 
         return null;
+    }
+
+    private CampaignDTO toDto(Campaign campaign) {
+        final var dto = CampaignDTO.builder()
+                .id(campaign.getId())
+                .name(campaign.getName())
+                .idHeartTeam(campaign.getTeam().getId())
+                .startEffectiveDate(campaign.getStartEffectiveDate())
+                .endEffectiveDate(campaign.getEndEffectiveDate())
+                .build();
+        return dto;
     }
 }

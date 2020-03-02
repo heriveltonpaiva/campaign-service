@@ -1,6 +1,19 @@
-rabbitmq:
-  image: rabbitmq:management
-  container_name: rabbitmq-campaign
-  ports:
-    - "5672:5672"
-    - "15672:15672"
+  db:
+    container_name: campaign_database
+    image: postgres
+    restart: always
+    volumes:
+      - ./initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: hpaiva
+      POSTGRES_DB: campaigndb
+      SCHEMA: public
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq-campaign
+    ports:
+      - "5672:5672"
+      - "15672:15672"

@@ -13,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "campaign_subscription")
 public class CampaignSubscription {
 
     @Id

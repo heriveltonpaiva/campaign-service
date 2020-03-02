@@ -17,7 +17,6 @@ public class Team {
 
     @Id
     @GeneratedValue
-    @Column(name = "id_team")
     private Long id;
 
     private String name;

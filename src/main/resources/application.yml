@@ -15,16 +15,19 @@ spring:
     main:
       banner-mode: "off"
     datasource:
-      url: jdbc:h2:mem:campaigndb;
-      driverClassName: org.h2.Driver
-      username: hpaiva
+      url: jdbc:postgresql://localhost:5432/campaigndb
+      driverClassName: org.postgresql.Driver
+      username: postgres
       password: hpaiva
     jpa:
-      database-platform: org.hibernate.dialect.H2Dialect
-    h2:
-      console:
-        enabled: true
-
+      database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+      open-in-view: false
+      show-sql: true
+      properties:
+        hibernate:
+          jdbc:
+            lob:
+              non_contextual_creation: true
 rabbitmq:
     queueName: campaign.queue
     exchangeName: campaign-exchange
