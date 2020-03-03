@@ -17,8 +17,6 @@ public class CampaignSubscriptionDTO {
 
     private CampaignDTO campaignDTO;
 
-    private Long idHearTeam;
-
     private ClubSupporterDTO clubSupporterDTO;
 
 }

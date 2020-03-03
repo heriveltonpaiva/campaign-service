@@ -1,8 +1,5 @@
 package br.com.hpaiva.campaignservice.campaign.subscription;
 
-import br.com.hpaiva.campaignservice.campaign.Campaign;
-import br.com.hpaiva.campaignservice.campaign.CampaignDTO;
-import br.com.hpaiva.campaignservice.clubsupporter.ClubSupporter;
 import br.com.hpaiva.campaignservice.clubsupporter.ClubSupporterDTO;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;

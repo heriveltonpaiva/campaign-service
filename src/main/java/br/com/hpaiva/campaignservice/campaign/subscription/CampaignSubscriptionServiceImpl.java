@@ -23,7 +23,7 @@ public class CampaignSubscriptionServiceImpl implements CampaignSubscriptionServ
     public void subscription(ClubSupporterDTO clubSupporterDTO) {
 
         campaignService.findCampaignsByIdHeartTeam(clubSupporterDTO.getIdHeartTeam()).forEach(campaign -> {
-            var newSubscription = CampaignSubscription.builder().clubSupporter(null).campaign(null).team(null).build();
+            var newSubscription = CampaignSubscription.builder().clubSupporter(null).campaign(null).build();
             repository.save(newSubscription);
         });
     }
@@ -36,7 +36,6 @@ public class CampaignSubscriptionServiceImpl implements CampaignSubscriptionServ
 
     private CampaignSubscriptionDTO toDto(final CampaignSubscription campaignSubscription){
         return CampaignSubscriptionDTO.builder()
-                .idHearTeam(campaignSubscription.getTeam().getId())
                 .campaignDTO(toDto(campaignSubscription.getCampaign()))
                 .clubSupporterDTO(toDto(campaignSubscription.getClubSupporter()))
                 .build();

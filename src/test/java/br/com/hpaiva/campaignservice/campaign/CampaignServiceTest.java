@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.stream.Collectors;
@@ -29,10 +30,10 @@ public class CampaignServiceTest {
 
         when(repository.findAll()).thenReturn(manyCampaignActiveInactiveList());
 
-        final var list = service.findAll();
+        final var list = service.findCampaignsByIdHeartTeam(1L);
 
         list.stream().filter(campaign ->
-                campaign.getEndEffectiveDate().isBefore(LocalDateTime.now())
+                campaign.getEndEffectiveDate().isBefore(LocalDate.now())
         ).collect(Collectors.toList());
 
         Assertions.assertEquals(list.size(), totalInactive);

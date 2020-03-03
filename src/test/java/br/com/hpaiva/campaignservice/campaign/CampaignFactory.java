@@ -2,15 +2,15 @@ package br.com.hpaiva.campaignservice.campaign;
 
 import org.hamcrest.Factory;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 public class CampaignFactory {
 
-    public static final LocalDateTime START_DATE = LocalDateTime.now();
+    public static final LocalDate START_DATE = LocalDate.now();
 
-    public static final LocalDateTime END_DATE = LocalDateTime.now().plusDays(20L);
+    public static final LocalDate END_DATE = LocalDate.now().plusDays(20L);
 
     @Factory
     public static List<Campaign> singleCampaignList() {
