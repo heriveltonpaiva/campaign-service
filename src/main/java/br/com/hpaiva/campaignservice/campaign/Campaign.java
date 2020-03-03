@@ -4,6 +4,7 @@ import br.com.hpaiva.campaignservice.team.Team;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -19,15 +20,18 @@ public class Campaign {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     private String name;
 
+    @NotNull
     @Column(name = "start_effective_date")
     private LocalDate startEffectiveDate;
 
+    @NotNull
     @Column(name = "end_effective_date")
     private LocalDate endEffectiveDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_team")
     private Team team;
 
@@ -37,12 +41,7 @@ public class Campaign {
     @Column(name = "update_at")
     private LocalDateTime updateAt;
 
-    public LocalDateTime getCreateAt() {
-        return createAt == null ? LocalDateTime.now() : createAt;
-    }
-
-    public LocalDateTime getUpdateAt() {
-        return createAt != null ? updateAt : LocalDateTime.now();
-    }
+    @Transient
+    private boolean conflicted;
 
 }

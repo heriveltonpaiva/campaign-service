@@ -2,6 +2,7 @@ package br.com.hpaiva.campaignservice.campaign.subscription;
 
 import br.com.hpaiva.campaignservice.clubsupporter.ClubSupporterDTO;
 import io.swagger.annotations.ApiOperation;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class CampaignSubscriptionResource {
 
     @PostMapping
     @ApiOperation(value = "Associa o sócio torcedor as campanhas do seu time do coração")
-    public ResponseEntity<CampaignSubscriptionDTO> subscription(@RequestBody ClubSupporterDTO clubSupporterDTO){
+    public ResponseEntity<CampaignSubscriptionDTO> subscription(@RequestBody ClubSupporterDTO clubSupporterDTO) throws NotFoundException {
         service.subscription(clubSupporterDTO);
         return ResponseEntity.ok().build();
     }

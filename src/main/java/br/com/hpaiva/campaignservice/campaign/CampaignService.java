@@ -1,16 +1,19 @@
 package br.com.hpaiva.campaignservice.campaign;
 
+import javassist.NotFoundException;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CampaignService {
 
-    Campaign save(CampaignDTO campaignDTO);
+    CampaignDTO createCampaign(CampaignRequest campaignRequest) throws NotFoundException;
 
-    Campaign update(Long campaignId, CampaignDTO campaignDTO);
+    CampaignDTO updateCampaign(Long campaignId, CampaignRequest campaignRequest) throws NotFoundException;
 
     void delete(Long campaignId);
 
     List<CampaignDTO> findCampaignsByIdHeartTeam(final Long idHeartTeam);
 
-    List<Campaign> changeCampaignDates(List<Campaign> campaigns);
+    List<Campaign> validateConflictingPeriods(List<Campaign> campaigns, LocalDate localDate);
 }

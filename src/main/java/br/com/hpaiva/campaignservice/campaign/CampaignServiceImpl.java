@@ -3,11 +3,13 @@ package br.com.hpaiva.campaignservice.campaign;
 import br.com.hpaiva.campaignservice.queue.AMQPProducer;
 import br.com.hpaiva.campaignservice.queue.Notification;
 import br.com.hpaiva.campaignservice.team.TeamService;
-import com.google.common.collect.Lists;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,35 +25,59 @@ public class CampaignServiceImpl implements CampaignService {
     private AMQPProducer producer;
 
     @Override
-    public Campaign save(CampaignDTO campaignDTO) {
+    public CampaignDTO createCampaign(CampaignRequest request) throws NotFoundException {
 
-        final var team = teamService.findById(campaignDTO.getIdHeartTeam());
-        log.info("m=save status=initial team=" + team);
+        final var team = teamService.findById(request.getIdHeartTeam()).orElseThrow(() ->
+                new NotFoundException("Não há time cadastrado para o idHeartTeam=" + request.getIdHeartTeam()));
+
+        log.info("m=createCampaign status=initial team=" + team);
+
         final var campaign = Campaign.builder()
-                .name(campaignDTO.getName())
-                .team(team.get())
-                .startEffectiveDate(campaignDTO.getStartEffectiveDate())
-                .endEffectiveDate(campaignDTO.getEndEffectiveDate())
+                .name(request.getName())
+                .team(team)
+                .startEffectiveDate(request.getStartEffectiveDate())
+                .endEffectiveDate(request.getEndEffectiveDate())
+                .createAt(LocalDateTime.now())
                 .build();
-        //TODO implement campaign bussiness rules before save
-        log.info("m=save status=final team=" + team + " campaign=" + campaign);
-        return repository.save(campaign);
+
+        final var allActivesCampaigns = repository.findAllActivesByIdHeartTeam(team.getId());
+        final var updateCampaigns = validateConflictingPeriods(allActivesCampaigns, campaign.getEndEffectiveDate());
+
+        updateCampaigns.add(campaign);
+        repository.saveAll(updateCampaigns);
+
+        log.info("m=createCampaign status=final team=" + team + " campaign=" + campaign);
+
+        return toDto(campaign);
     }
 
     @Override
-    public Campaign update(Long campaignId, CampaignDTO campaignDTO) {
-        var campaign = repository.findById(campaignId);
-        //TODO
-        campaign.get().setTeam(null);
-        campaign.get().setName(campaignDTO.getName());
-        campaign.get().setStartEffectiveDate(campaignDTO.getStartEffectiveDate());
-        campaign.get().setEndEffectiveDate(campaignDTO.getEndEffectiveDate());
+    public CampaignDTO updateCampaign(Long campaignId, CampaignRequest request) throws NotFoundException {
+        var campaign = repository.findById(campaignId).get();
 
-        //TODO transform toDto and validate equals before post on queue
-        //TODO if campaign is equals then notify another services
-        publishQueue(campaign.get());
+        final var team = teamService.findById(request.getIdHeartTeam()).orElseThrow(() ->
+                new NotFoundException("Não há time cadastrado para o idHeartTeam=" + request.getIdHeartTeam()));
+        log.info("m=update status=initial team=" + team);
 
-        return repository.save(campaign.get());
+        campaign.setTeam(team);
+        campaign.setName(request.getName());
+        campaign.setStartEffectiveDate(request.getStartEffectiveDate());
+        campaign.setEndEffectiveDate(request.getEndEffectiveDate());
+        campaign.setUpdateAt(LocalDateTime.now());
+
+        final var allActivesCampaigns = repository.findAllActivesByIdHeartTeam(team.getId());
+        final var updateCampaigns = validateConflictingPeriods(allActivesCampaigns, campaign.getEndEffectiveDate());
+
+        updateCampaigns.add(campaign);
+        repository.saveAll(updateCampaigns);
+
+        log.info("m=createCampaign status=final team=" + team + " campaign=" + campaign);
+
+        updateCampaigns.forEach(campaignUpdated -> {
+            publishQueue(toDto(campaignUpdated));
+        });
+
+        return toDto(campaign);
     }
 
     @Override
@@ -66,15 +92,27 @@ public class CampaignServiceImpl implements CampaignService {
         return list.stream().map(campaign -> toDto(campaign)).collect(Collectors.toList());
     }
 
-    private void publishQueue(Campaign campaign) {
+    private void publishQueue(CampaignDTO campaignDTO) {
         var notification = new Notification();
-        notification.setData(campaign);
+        notification.setData(campaignDTO);
         producer.sendMessage(notification);
     }
 
-    public List<Campaign> changeCampaignDates(List<Campaign> campaigns) {
+    public List<Campaign> validateConflictingPeriods(List<Campaign> campaigns, LocalDate endDate) {
 
-        return null;
+        final var updatedCampaigns = campaigns.stream().filter(campaign ->
+                campaign.getEndEffectiveDate().equals(endDate) && !campaign.isConflicted()).findFirst()
+                .map(campaign -> {
+                    campaign.setEndEffectiveDate(campaign.getEndEffectiveDate().plusDays(1));
+                    campaign.setUpdateAt(LocalDateTime.now());
+                    campaign.setConflicted(Boolean.TRUE);
+                    return campaign;
+                });
+
+        if (!updatedCampaigns.isEmpty())
+            return validateConflictingPeriods(campaigns, endDate.plusDays(1));
+
+        return campaigns;
     }
 
     private CampaignDTO toDto(Campaign campaign) {

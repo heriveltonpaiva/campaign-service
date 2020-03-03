@@ -2,7 +2,7 @@
 
 Serviço responsável pela gestão das campanhas
 
-####Tecnologias Utilizadas 
+#### Tecnologias Utilizadas 
 
 Segue abaixo as principais tecnologias utilizadas nesse projeto:
 
@@ -62,4 +62,9 @@ Segue abaixo o diagrama de domínio da aplicação:
 
 #### Como Testar
 
-Cenário de Teste 1: Cadastrar Campanha
+Cenário de Teste 1: 
+Ao tentar cadastrar uma campanha com IdHeartTeam inexistente. 
+
+o sistema irá lançar uma exceção: 
+Erro 500 com a mensagem: 
+`Não há time cadastrado para o idHeartTeam=?`

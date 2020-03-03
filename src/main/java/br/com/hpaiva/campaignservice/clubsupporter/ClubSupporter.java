@@ -4,6 +4,7 @@ import br.com.hpaiva.campaignservice.team.Team;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -19,15 +20,18 @@ public class ClubSupporter {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String email;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_team")
+    @EqualsAndHashCode.Exclude
     private Team team;
 
     private boolean active;

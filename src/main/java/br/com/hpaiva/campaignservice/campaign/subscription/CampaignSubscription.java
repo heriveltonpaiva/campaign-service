@@ -19,11 +19,11 @@ public class CampaignSubscription {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_campaign")
     private Campaign campaign;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_club_supporter")
     private ClubSupporter clubSupporter;
 
