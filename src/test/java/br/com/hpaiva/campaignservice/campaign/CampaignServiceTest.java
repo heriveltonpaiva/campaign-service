@@ -1,5 +1,9 @@
 package br.com.hpaiva.campaignservice.campaign;
 
+import br.com.hpaiva.campaignservice.clubsupporter.ClubSupporterFactory;
+import br.com.hpaiva.campaignservice.queue.AMQPProducer;
+import br.com.hpaiva.campaignservice.team.TeamService;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,8 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static br.com.hpaiva.campaignservice.campaign.CampaignFactory.*;
@@ -24,11 +27,17 @@ public class CampaignServiceTest {
     @Mock
     private CampaignRepository repository;
 
+    @Mock
+    private TeamService teamService;
+
+    @Mock
+    private AMQPProducer producer;
+
     @Test
     public void shouldReturnEffectiveCampaign() {
         final var totalInactive = 2;
 
-        when(repository.findAll()).thenReturn(manyCampaignActiveInactiveList());
+        when(repository.findAllActivesByIdHeartTeam(1L)).thenReturn(manyCampaignActiveInactiveList());
 
         final var list = service.findCampaignsByIdHeartTeam(1L);
 
@@ -41,26 +50,20 @@ public class CampaignServiceTest {
 
     @Test
     public void shouldChangeEndDateForOneCampaignActive() {
-        //given
         final var newCampaign = singleCampaignList().stream().findFirst().get();
         final var newDateUpdated = newCampaign.getEndEffectiveDate().plusDays(1);
 
-        //when
-        final var listUpdatedDates = service.changeCampaignDates(singleCampaignList());
+        final var listUpdatedDates = service.validateConflictingPeriods(singleCampaignList(), newCampaign.getEndEffectiveDate());
 
-        //then
         Assertions.assertEquals(listUpdatedDates.stream().findFirst().get().getEndEffectiveDate(), newDateUpdated);
     }
 
     @Test
     public void shouldChangeEndDateForSeveralCampaignActive() {
-        //given
         final var newCampaign = singleCampaignList().stream().findFirst().get();
 
-        //when
-        final var list = service.changeCampaignDates(manyCampaignConflictDateList());
+        final var list = service.validateConflictingPeriods(manyCampaignConflictDateList(), newCampaign.getEndEffectiveDate());
 
-        //then
         final var listSameEndDate = list.stream().filter(campaign ->
                 newCampaign.getEndEffectiveDate().equals(campaign.getEndEffectiveDate())).
                 collect(Collectors.toList());
@@ -68,14 +71,26 @@ public class CampaignServiceTest {
     }
 
     @Test
-    public void shouldSaveWhenInactiveCampaigns() {
-        final var newCampaign = singleCampaignList().stream().findFirst().get();
-        verify(service.save(null),timeout(1));
+    public void shouldCreateNewCampaign() throws NotFoundException {
+
+        when(teamService.findById(ClubSupporterFactory.DEFAULT_ID_TEAM)).thenReturn(Optional.of(ClubSupporterFactory.team()));
+        when(repository.findAllActivesByIdHeartTeam(ClubSupporterFactory.DEFAULT_ID_TEAM)).thenReturn(manyCampaignList());
+
+        service.createCampaign(campaignRequest());
+
+        verify(repository, times(1)).saveAll(manyCampaignList());
     }
 
     @Test
-    public void shouldNotifyThatHasUpdateInCampaignExist() {
-        service.update(1L, null);
+    public void shouldNotifyThatHasUpdateInCampaignExist() throws NotFoundException {
+
+        when(repository.findById(ClubSupporterFactory.DEFAULT_ID)).thenReturn(Optional.of(campaign()));
+        when(teamService.findById(ClubSupporterFactory.DEFAULT_ID_TEAM)).thenReturn(Optional.of(ClubSupporterFactory.team()));
+        when(repository.findAllActivesByIdHeartTeam(ClubSupporterFactory.DEFAULT_ID_TEAM)).thenReturn(manyCampaignConflictDateList());
+
+        service.updateCampaign(ClubSupporterFactory.DEFAULT_ID, campaignRequest());
+        verify(repository, times(1)).saveAll(any());
+        verify(producer, times(3)).sendMessage(any());
 
     }
 

@@ -39,9 +39,13 @@ public class Campaign {
     private LocalDateTime createAt;
 
     @Column(name = "update_at")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private LocalDateTime updateAt;
 
     @Transient
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private boolean conflicted;
 
 }

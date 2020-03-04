@@ -50,21 +50,13 @@ Você pode acessar a documentação da api através do swagger:
 
 #### Arquitetura
 
-* A organização das classes e pacotes se aplicam a algumas práticas e conceitos DDD, Campaign e CampaignSubscription isolado em um único
-contexto de negócio, assim como team e clubsupporter em um contexto isolado. 
-* Domínios externos não conhecem as entidades, o trafégo de 
-informações entre serviços ocorre através dos DTO's. 
-
 Segue abaixo o diagrama de domínio da aplicação:
+
 
 ![](src/main/resources/images/domain_campaign.png)
 
 
-#### Como Testar
-
-Cenário de Teste 1: 
-Ao tentar cadastrar uma campanha com IdHeartTeam inexistente. 
-
-o sistema irá lançar uma exceção: 
-Erro 500 com a mensagem: 
-`Não há time cadastrado para o idHeartTeam=?`
+* A organização das classes e pacotes se aplicam a algumas práticas e conceitos DDD, Campaign e CampaignSubscription isolado em um único
+contexto de negócio, assim como team e clubsupporter em um contexto isolado. 
+* Domínios externos não conhecem as entidades, o trafégo de 
+informações entre serviços ocorre através dos DTO's. 
