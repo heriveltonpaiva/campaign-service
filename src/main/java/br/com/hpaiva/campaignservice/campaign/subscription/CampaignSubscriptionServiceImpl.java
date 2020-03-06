@@ -35,8 +35,9 @@ public class CampaignSubscriptionServiceImpl implements CampaignSubscriptionServ
     }
 
     @Override
-    public List<CampaignSubscriptionDTO> findCampaignSubscriptionsByClubSupporter(Long idClubSupporter) {
+    public List<CampaignSubscriptionDTO> findCampaignSubscriptionsByClubSupporter(Long idClubSupporter) throws NotFoundException {
         var list = repository.findCampaignSubscriptionsByClubSupporterActive(idClubSupporter);
+        log.info("Não há campanhas associadas para esse sócio.");
         return list.stream().map(c -> mapper.toDto(c)).collect(Collectors.toList());
     }
 

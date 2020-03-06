@@ -10,6 +10,6 @@ public interface CampaignSubscriptionService {
 
     void subscription(ClubSupporterDTO clubSupporterDTO) throws NotFoundException;
 
-    List<CampaignSubscriptionDTO> findCampaignSubscriptionsByClubSupporter(Long idClubSupporter);
+    List<CampaignSubscriptionDTO> findCampaignSubscriptionsByClubSupporter(Long idClubSupporter) throws NotFoundException;
 
 }

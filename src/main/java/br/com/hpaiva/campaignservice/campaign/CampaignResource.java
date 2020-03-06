@@ -33,7 +33,7 @@ public class CampaignResource {
 
     @GetMapping
     @ApiOperation(value = "Lista todas as campanhas vigentes cadastradas")
-    public List<CampaignDTO> findCampaignsByIdHeartTeam(Long idHeartTeam) {
+    public @ResponseBody List<CampaignDTO> findCampaignsByIdHeartTeam(Long idHeartTeam) {
         return campaignService.findCampaignsByIdHeartTeam(idHeartTeam);
     }
 
